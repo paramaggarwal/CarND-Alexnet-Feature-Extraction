@@ -75,14 +75,15 @@ with tf.Session() as sess:
     for i in range(EPOCHS):
         num_examples = len(X_training)
         X_training, y_training = shuffle(X_training, y_training)
+        t0 = time.time()
         for offset in range(0, num_examples, BATCH_SIZE):
-            print("BATCH {} ...".format(offset+1))
             end = offset + BATCH_SIZE
             batch_x, batch_y = X_training[offset:end], y_training[offset:end]
             sess.run(training_operation, feed_dict={x: batch_x, y: batch_y})
 
         validation_loss, validation_accuracy = evaluate(X_validation, y_validation)
         print("EPOCH {} ...".format(i+1))
+        print("Time: %.3f seconds" % (time.time() - t0))
         print("Validation Loss = {:.3f}".format(validation_loss))
         print("Validation Accuracy = {:.3f}".format(validation_accuracy))
         print()
