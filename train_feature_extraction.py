@@ -16,7 +16,7 @@ X_training, X_validation, y_training, y_validation = train_test_split(X_train, y
 
 # TODO: Define placeholders and resize operation.
 x = tf.placeholder(tf.float32, (None, 32, 32, 3))
-y = tf.placeholder(tf.int32, (None))
+y = tf.placeholder(tf.int64, (None))
 resized = tf.image.resize_images(x, (227, 227))
 
 # TODO: pass placeholder as first argument to `AlexNet`.
