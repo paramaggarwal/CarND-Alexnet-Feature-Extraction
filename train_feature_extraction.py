@@ -1,5 +1,5 @@
 import pickle
-import pandas as pd
+import time
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
@@ -9,7 +9,6 @@ from alexnet import AlexNet
 with open('train.p', mode='rb') as f:
     train = pickle.load(f)
 X_train, y_train = train['features'], train['labels']
-sign_names = pd.read_csv('signnames.csv')
 nb_classes = 43
 
 # TODO: Split data into training and validation sets.
@@ -41,16 +40,14 @@ probs = tf.nn.softmax(logits)
 # be able to reuse some the code.
 EPOCHS = 10
 BATCH_SIZE = 128
-LEARNING_RATE = 0.001
 
-one_hot_y = tf.one_hot(y, nb_classes)
-cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits, one_hot_y)
+cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(logits, y)
 loss_operation = tf.reduce_mean(cross_entropy)
-optimizer = tf.train.AdamOptimizer(learning_rate=LEARNING_RATE)
+optimizer = tf.train.AdamOptimizer()
 training_operation = optimizer.minimize(loss_operation)
 
-correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(one_hot_y, 1))
-accuracy_operation = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+preds = tf.arg_max(logits, 1)
+accuracy_operation = tf.reduce_mean(tf.cast(tf.equal(preds, y), tf.float32))
 saver = tf.train.Saver()
 
 # TODO: Train and evaluate the feature extraction model.
